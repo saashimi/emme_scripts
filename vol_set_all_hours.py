@@ -66,12 +66,12 @@ def shapefile_export(working_dir, scenario, app):
 
 
 def attribute_copy(bank_in):
-    """Aggregates volau attribute into 2017 scenario:
-        @am0708 - 
-        @am0809 -
-        ul1 -
-        ul2 - 
-        volau - 
+    """Aggregates volau attribute from the following times into 2017 scenario:
+        @am0708: 0700-0800
+        @am0809: 0800-0900
+        ul1:     1200-1300
+        ul2:     1600-1700
+        volau:   1700-1800
     """
     print 'Copying attributes...'
     updates = {'@am0708': 2007, '@am0809': 2008}
