@@ -1,34 +1,44 @@
 """
 vol_set_all_hours.py
 by Kevin Saavedra, Metro, kevin.saavedra@oregonmetro.gov
+
+Aggregates auto volume (volau) information into @am0708, @am0809, volau, ul1
+and ul2 attributes into 2017 Scenario number for shapefile export and future
+parsing.
+
 Run this script from the directory containing your emmebank
 e.g. ../model/peak/assignPeakSpread/
 Useage:
 >> python vol_set_all_hours.py
+
+Note: If you have ArcCatalog or ArcGIS open on the output links.shp,
+it will produce a lock on the shapefile that will prevent you from re-running
+the script:
+    `Cannot create a file when that file already exists.`
+Make sure you do not have the links.shp selected at all if you need to run this
+more than once.
 """
 
 import os
 import sys
 import shutil
-import inro.emme.database.emmebank as _emmebank
 import inro.emme.desktop.app as _app
 import inro.modeller as _m
 
 
 def new_project(working_dir):
-    """Filter
-    """
+    """Replaces `New_Project` directory and creates new .emp file."""
     emmebank_path = os.path.join(working_dir, "emmebank")
-    try:    
-        shutil.rmtree(os.path.join(working_dir,"New_Project"))
-        project = _app.create_project(working_dir,"New_Project")
+    try:
+        shutil.rmtree(os.path.join(working_dir, "New_Project"))
+        project = _app.create_project(working_dir, "New_Project")
     except WindowsError:
         if os.path.exists(working_dir):
-            project = _app.create_project(working_dir,"New_Project")
+            project = _app.create_project(working_dir, "New_Project")
         else:
             print "Path does not exist. Please enter an existing path."
-            sys.exit()        
-    
+            sys.exit()
+            
     my_app = _app.start_dedicated(False, "000", project)
     data = my_app.data_explorer()
     bank = data.add_database(emmebank_path)
@@ -36,7 +46,7 @@ def new_project(working_dir):
 
 
 def shapefile_export(working_dir, scenario, app):
-    """Exports emme network as ArcGIS shapefile using standard modeller 
+    """Exports emme network as ArcGIS shapefile using standard modeller
     toolbox."""
     print 'Exporting shapefile...'
     export_path = os.path.join(working_dir, 
@@ -46,8 +56,8 @@ def shapefile_export(working_dir, scenario, app):
         "inro.emme.data.network.export_network_as_shapefile"
     )
     selection = {
-        "node": "all", 
-        "link": "all", 
+        "node": "all",
+        "link": "all",
         "turn": "all",
         "transit_line": "all"
     }
@@ -56,28 +66,43 @@ def shapefile_export(working_dir, scenario, app):
 
 
 def attribute_copy(bank_in):
+    """Aggregates volau attribute into 2017 scenario:
+        @am0708 - 
+        @am0809 -
+        ul1 -
+        ul2 - 
+        volau - 
+    """
     print 'Copying attributes...'
     updates = {'@am0708': 2007, '@am0809': 2008}
 
     for key in updates:
         if key not in bank_in.scenario(2017).attributes('LINK'):
-            bank_in.scenario(2017).create_extra_attribute('LINK', key)
-            temp = bank_in.scenario(updates[key]).get_attribute_values('LINK', ['auto_volume'])
-            bank_in.scenario(2017).set_attribute_values('LINK', [key], temp)
-=
-    temp_ul1 = bank_in.scenario(2012).get_attribute_values('LINK', ['auto_volume'])
-    bank_in.scenario(2017).set_attribute_values('LINK', ['data1'], temp_ul1)
-    temp_ul2 = bank_in.scenario(2016).get_attribute_values('LINK', ['auto_volume'])
-    bank_in.scenario(2017).set_attribute_values('LINK', ['data2'], temp_ul2)
+            bank_in.scenario(2017).create_extra_attribute(
+                'LINK', key)
+            temp = bank_in.scenario(updates[key]).get_attribute_values(
+                'LINK', ['auto_volume'])
+            bank_in.scenario(2017).set_attribute_values(
+                'LINK', [key], temp)
+
+    temp_ul1 = bank_in.scenario(2012).get_attribute_values(
+        'LINK', ['auto_volume'])
+    bank_in.scenario(2017).set_attribute_values(
+        'LINK', ['data1'], temp_ul1)
+    temp_ul2 = bank_in.scenario(2016).get_attribute_values(
+        'LINK', ['auto_volume'])
+    bank_in.scenario(2017).set_attribute_values(
+        'LINK', ['data2'], temp_ul2)
     print 'Completed copying attributes.'
-    
+
 
 def main():
     project_path = os.getcwd()
     new_app, new_bank = new_project(project_path)
     new_bank.open()
     attribute_copy(new_bank.core_emmebank)
-    shapefile_export(project_path, new_bank.core_emmebank.scenario(2017), new_app)
+    shapefile_export(project_path, new_bank.core_emmebank.scenario(2017),
+                     new_app)
     new_bank.close()
 
 
