@@ -38,7 +38,7 @@ def new_project(working_dir):
         else:
             print "Path does not exist. Please enter an existing path."
             sys.exit()
-            
+
     my_app = _app.start_dedicated(False, "000", project)
     data = my_app.data_explorer()
     bank = data.add_database(emmebank_path)
@@ -67,15 +67,14 @@ def shapefile_export(working_dir, scenario, app):
 
 def attribute_copy(bank_in):
     """Aggregates volau attribute from the following times into 2017 scenario:
-        @am0708: 0700-0800
-        @am0809: 0800-0900
-        ul1:     1200-1300
-        ul2:     1600-1700
-        volau:   1700-1800
+        @am0708: 0700-0800 from Scenario 2012
+        @am0809: 0800-0900 from Scenario 2008
+        ul1:     1200-1300 from Scenario 2012
+        ul2:     1600-1700 from Scenario 2016
+        volau:   1700-1800 from Scenario 2017 (current scenario)
     """
     print 'Copying attributes...'
     updates = {'@am0708': 2007, '@am0809': 2008}
-
     for key in updates:
         if key not in bank_in.scenario(2017).attributes('LINK'):
             bank_in.scenario(2017).create_extra_attribute(
