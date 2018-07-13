@@ -8,6 +8,7 @@ import os
 
 
 def rename_fields(shp_in):
+    print "Renaming fields..."
     data_source = gdal.OpenEx(shp_in, gdal.OF_VECTOR | gdal.OF_UPDATE)
 
     rename = {'@am0708': 'VOLS_07_08',
@@ -21,9 +22,11 @@ def rename_fields(shp_in):
     for key in rename:
         data_source.ExecuteSQL('ALTER TABLE {} RENAME COLUMN {} TO {}'
                                .format('emme_links', key, rename[key]))
+    print "Completed renaming fields."
 
 
 def filter_shp(dir, shp_in):
+    print "Filtering fields..."
     driver = ogr.GetDriverByName("ESRI Shapefile")
     data_source = driver.Open(shp_in, 0)
 
@@ -40,13 +43,14 @@ def filter_shp(dir, shp_in):
     out_ds = driver.CreateDataSource(out_shapefile)
     out_layer = out_ds.CopyLayer(input_layer, 'output_layer')
     del input_layer, data_source, out_ds, out_layer
+    print "Finished filtering fields."
 
 
 def main():
     working_dir = os.path.join(
         os.getcwd(), "New_Project/Media/Python_exported_scenario/")
     shp = os.path.join(working_dir, "emme_links.shp")
-    #rename_fields(shp)
+    rename_fields(shp)
     filter_shp(working_dir, shp)
 
 
