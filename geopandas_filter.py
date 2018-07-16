@@ -27,6 +27,7 @@ def links_filter(df_links_in):
         AND (VDF IN (1, 2, 4, 9, 10))
         AND NOT TYPE = 40
     """
+    print 'Filtering links...'
     df_relevant = df_links_in[
         (df_links_in['MODES'].str.contains('c')) &
         (df_links_in['VDF'].isin([1, 2, 4, 9, 10])) &  
@@ -44,23 +45,34 @@ def intersect_filter(df_shp, df_shp_intersects):
     """
     Filters for intersecting points only.
     """
+    print "Determining node/link intersections..."
     df_join = gpd.sjoin(df_shp, df_shp_intersects, op='intersects')
+    df_join = df_join[['ID_left', 'X', 'Y', 'geometry']]
+    df_join = df_join.rename(columns = {'ID_left' : 'ID'})
+    df_join = df_join.drop_duplicates(['ID', 'X', 'Y'])
     return df_join
 
 
 def main():
     working_dir = os.path.join(
-        os.getcwd(), "New_Project/Media/Python_exported_scenario/")
+        os.getcwd(), 'New_Project/Media/Python_exported_scenario/')
+    print 'Loading files...'
     df_links = gpd.read_file(os.path.join(working_dir, "emme_links.shp"))
     df_nodes = gpd.read_file(os.path.join(working_dir, "emme_nodes.shp"))
     
     df_links = rename_fields(df_links)
     df_links = links_filter(df_links)
-    df_links.to_file('output_links.shp', driver='ESRI Shapefile')
+    print 'Exporting links...'
+    df_links.to_file(
+        'New_Project/Media/Python_exported_scenario/output_links.shp', 
+        driver='ESRI Shapefile')
         
     df_nodes = intersect_filter(df_nodes, df_links)
-    df_nodes.to_file('output_nodes.shp', driver='ESRI Shapefile')
-
+    print 'Exporting nodes...'
+    df_nodes.to_file(
+        'New_Project/Media/Python_exported_scenario/output_nodes.shp',
+         driver='ESRI Shapefile')
+    print 'Script completed.'
 
 if __name__ == '__main__':
     main()
