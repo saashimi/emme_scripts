@@ -9,7 +9,7 @@ parsing.
 Run this script from the directory containing your emmebank
 e.g. ../model/peak/assignPeakSpread/
 Useage:
->> python vol_set_all_hours.py
+>>> python vol_set_all_hours.py
 
 Note: If you have ArcCatalog or ArcGIS open on the output links.shp,
 it will produce a lock on the shapefile that will prevent you from re-running

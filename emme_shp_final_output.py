@@ -1,11 +1,29 @@
 """
-tests with geopandas
+emme_shp_final_output.py
+by Kevin Saavedra, Metro, kevin.saavedra@oregonmetro.gov
+
+Performs cleanup on output shapefiles resulting from vol_set_hours.py.  
+
+Run this script from the directory containing your emmebank
+e.g. ../model/peak/assignPeakSpread/
+
+Useage:
+>>> python emme_shp_final_output.py
+
+Requirements:
+geopandas library.
 """
 
 import geopandas as gpd
 import os
 
+
 def rename_fields(df_rename):
+    """Renames default output from vol_set_hours.py script into standalone
+    ArcGIS shapefile fields.
+    Args: df_rename, a geopandas dataframe.
+    Returns: df_rename, a geopandas dataframe with final renamed columns.
+    """
     df_rename = df_rename.rename(columns=
     {
         '@am0708': 'VOLS_07_08',
@@ -21,11 +39,16 @@ def rename_fields(df_rename):
 
 def links_filter(df_links_in):
     """
-    Should mirror ArcGIS SQL query:
+    Filters links that should mimic the ArcGIS SQL query:
+    ---------------------------------
     SELECT * WHERE
-        MODES LIKE '%c%'
-        AND (VDF IN (1, 2, 4, 9, 10))
-        AND NOT TYPE = 40
+        MODES LIKE '%c%'                  # AUTO MODES
+        AND (VDF IN (1, 2, 4, 9, 10))     # 1 = FWY, 2 = APPROACH, 4 = MIDBLOCK
+                                          # 9 = PORTLAND CBD, 10 = RAMP METERS
+        AND NOT TYPE = 40                 # STUB LINKS
+    ---------------------------------
+    Args: df_links_in, a geopandas dataframe
+    Returns: df_relevant, a geopandas dataframe with filtered links
     """
     print 'Filtering links...'
     df_relevant = df_links_in[
@@ -43,17 +66,27 @@ def links_filter(df_links_in):
 
 def intersect_filter(df_shp, df_shp_intersects):
     """
-    Filters for intersecting points only.
+    Filters for points that intersect a filtered roadway network.
+    Args:
+    df_shp, a geopandas dataframe containing nodes
+    df_shp_intersects, a geopandas dataframe containing links.
+    Returns:
+    df_join, a geopandas dataframe with final intersecting nodes only, and 
+    with only relevant fields.
     """
     print "Determining node/link intersections..."
     df_join = gpd.sjoin(df_shp, df_shp_intersects, op='intersects')
     df_join = df_join[['ID_left', 'X', 'Y', 'geometry']]
     df_join = df_join.rename(columns = {'ID_left' : 'ID'})
-    df_join = df_join.drop_duplicates(['ID', 'X', 'Y'])
+    # TODO: INVESTIGATE WHY THERE ARE SO MANY DUPLICATE NODES FROM THIS STEP
+    df_join = df_join.drop_duplicates(['ID', 'X', 'Y']) 
     return df_join
 
 
 def main():
+    """
+    Main program flow.
+    """
     working_dir = os.path.join(
         os.getcwd(), 'New_Project/Media/Python_exported_scenario/')
     print 'Loading files...'
