@@ -28,18 +28,18 @@ import inro.modeller as _m
 
 def new_project(working_dir):
     """Replaces `New_Project` directory and creates new .emp file."""
-    emmebank_path = os.path.join(working_dir, "emmebank")
+    emmebank_path = os.path.join(working_dir, 'emmebank')
     try:
-        shutil.rmtree(os.path.join(working_dir, "New_Project"))
-        project = _app.create_project(working_dir, "New_Project")
+        shutil.rmtree(os.path.join(working_dir, 'New_Project'))
+        project = _app.create_project(working_dir, 'New_Project')
     except WindowsError:
         if os.path.exists(working_dir):
-            project = _app.create_project(working_dir, "New_Project")
+            project = _app.create_project(working_dir, 'New_Project')
         else:
-            print "Path does not exist. Please enter an existing path."
+            print 'Path does not exist. Please enter an existing path.'
             sys.exit()
 
-    my_app = _app.start_dedicated(False, "000", project)
+    my_app = _app.start_dedicated(False, '000', project)
     data = my_app.data_explorer()
     bank = data.add_database(emmebank_path)
     return my_app, bank
@@ -50,16 +50,16 @@ def shapefile_export(working_dir, scenario, app):
     toolbox."""
     print 'Exporting shapefile...'
     export_path = os.path.join(working_dir, 
-                               "New_Project/Media/Python_exported_scenario")
+                               'New_Project/Media/Python_exported_scenario')
     my_modeller = _m.Modeller(app)
     network_2_shp = my_modeller.tool(
-        "inro.emme.data.network.export_network_as_shapefile"
+        'inro.emme.data.network.export_network_as_shapefile'
     )
     selection = {
-        "node": "all",
-        "link": "all",
-        "turn": "all",
-        "transit_line": "all"
+        'node': 'all',
+        'link': 'all',
+        'turn': 'all',
+        'transit_line': 'all'
     }
     network_2_shp(export_path, False, 'SEGMENTS', scenario, selection)
     print 'Completed exporting shapefile.'
