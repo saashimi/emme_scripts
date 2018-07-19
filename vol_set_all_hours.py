@@ -45,6 +45,28 @@ def new_project(working_dir):
     return my_app, bank
 
 
+def reproject_scenario(scenario, app):
+    """Reproject from default to Oregon Stateplane"""
+    my_modeller = _m.Modeller(app)
+    project_path = os.path.dirname(_m.Modeller().desktop.project.path)
+    project_coord = my_modeller.tool(
+        'inro.emme.data.network.base.project_network_coordinates'
+    )
+    old_prj_file = os.path.join(project_path, 'New_Project.emp.prj')
+    prj_path = 'Program Files\\INRO\\Emme\\Emme 4\\Coordinate Systems\\Projected Coordinate Systems\\State Plane\\NAD 1983 (Intl Feet)\\'
+    prj_file = os.path.join('C:\\', prj_path,
+                            'NAD 1983 StatePlane Oregon North FIPS 3601 '
+                            '(Intl Feet).prj')
+    print prj_file
+    project_coord(from_scenario=scenario,
+                  from_proj_file=old_prj_file,
+                  to_proj_file=prj_file,
+                  new_scenario_id=None,
+                  overwrite=True,
+                  set_as_primary=True)
+    return scenario, my_modeller
+
+
 def shapefile_export(working_dir, scenario, app):
     """Exports emme network as ArcGIS shapefile using standard modeller
     toolbox."""
@@ -100,8 +122,8 @@ def main():
     new_app, new_bank = new_project(project_path)
     new_bank.open()
     attribute_copy(new_bank.core_emmebank)
-    shapefile_export(project_path, new_bank.core_emmebank.scenario(2017),
-                     new_app)
+    scenario, app = reproject_scenario(new_bank.core_emmebank.scenario(2017), new_app)
+    shapefile_export(project_path, scenario, app)
     new_bank.close()
 
 
