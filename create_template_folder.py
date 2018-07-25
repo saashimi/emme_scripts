@@ -5,36 +5,49 @@ Creates Metro_Project Template folder
 import os
 import sys
 import shutil
-import inro.emme.desktop.app as _app
 
 
-def new_project(working_dir):
-    """Replaces `New_Project` directory and creates new .emp file."""
-    emmebank_path = os.path.join(working_dir, 'emmebank')
+def copy_template_folder(working_dir):
+    """Copies TBM template files into current directory"""
+    templ_copy_dir = 'V:/tbm/kate/inroProjectTemplate/Metro_Project'
     try:
         shutil.rmtree(os.path.join(working_dir, 'Metro_Project'))
-        project = _app.create_project(working_dir, 'Metro_Project')
+        shutil.copytree(templ_copy_dir, working_dir)
+
     except WindowsError:
         if os.path.exists(working_dir):
-            project = _app.create_project(working_dir, 'Metro_Project')
+            shutil.copytree(templ_copy_dir,
+                            os.path.join(working_dir, 'Metro_Project'))
         else:
             print 'Path does not exist. Please enter an existing path.'
             sys.exit()
 
-    my_app = _app.start_dedicated(False, '000', project)
-    data = my_app.data_explorer()
-    bank = data.add_database(emmebank_path)
-    return my_app, bank
 
+def path_edits(working_dir):
+    files = ['Metro_Project.emp',
+             'Views/Initial.emv',
+             'Views/RTP18_los.emv']
+    old_path = 'H:/rtp/2018rtp/_round2/modelRuns/2015/iter4/model/peak/' \
+               'assignPeakSpread/'
+    project_path = os.path.join(working_dir, 'Metro_Project')
 
-def copy_template_files(working_dir):
-    
+    for file in files:
+        with open(os.path.join(project_path, file), 'r') as src:
+            filedata = src.read()
 
+        current_dir_str = working_dir.replace('\\', '/') + '/'
+        bank_error_str = 'assignPeakSpreademmebank'
+        bank_error_fix = 'assignPeakSpread\emmebank'
+        filedata = filedata.replace(old_path, current_dir_str)
+        filedata = filedata.replace(bank_error_str, bank_error_fix)
+
+        with open(os.path.join(project_path, file), 'w') as src:
+            src.write(filedata)
 
 
 def main():
     project_path = os.getcwd()
-    new_app, new_bank = new_project(project_path)
+    path_edits(project_path)
 
 
 if __name__ == '__main__':
