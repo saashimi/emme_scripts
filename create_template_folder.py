@@ -61,6 +61,7 @@ def path_edits(working_dir):
 def main():
     """Main program control flow."""
     project_path = os.getcwd()
+    copy_template_folder(project_path)
     path_edits(project_path)
 
 
