@@ -11,49 +11,55 @@ Useage:
 """
 
 import os
-import sys
 import shutil
 
 
 def copy_template_folder(working_dir):
-    """Copies TBM template files into current directory"""
+    """Copies TBM template files into current directory.
+    args: working_dir - the current working directory.
+    returns: None.
+    """
     templ_copy_dir = 'V:/tbm/kate/inroProjectTemplate/Metro_Project'
-    try:
-        shutil.rmtree(os.path.join(working_dir, 'Metro_Project'))
-        shutil.copytree(templ_copy_dir, working_dir)
-
-    except WindowsError:
-        if os.path.exists(working_dir):
-            shutil.copytree(templ_copy_dir,
-                            os.path.join(working_dir, 'Metro_Project'))
-        else:
-            print 'Path does not exist. Please enter an existing path.'
-            sys.exit()
+    # Check for existing project folder.
+    project_folders = ['Metro_Project', 'New_Project']
+    for project in project_folders:
+        if os.path.isdir(project):
+            overwrite = raw_input(project + ' folder exists! Delete? (y/n)\n')
+            if overwrite.lower() == 'y':
+                shutil.rmtree(os.path.join(working_dir, project))
+                continue
+            if overwrite.lower() == 'n':
+                print('Exiting program without creating new Metro_Project!.')
+                break
+            else:
+                print('Invalid option! Exiting program!')
+                break
+    # Write project folder if none exists.
+    if not os.path.isdir('Metro_Project'):
+        shutil.copytree(templ_copy_dir,
+                        os.path.join(working_dir, 'Metro_Project'))
+        print('Copied new Metro_Project folder.')
 
 
 def path_edits(working_dir):
     """Writes appropriate path corrections to files based on the current
-       working directory."""
+    working directory.
+    args: working_dir - current working directory.
+    returns: None.
+    """
     files = ['Metro_Project.emp',
              'Views/Initial.emv',
              'Views/RTP18_los.emv']
 
     # This is the path currently found in the template files.
-    old_path = 'H:/rtp/2018rtp/_round2/modelRuns/2015/iter4/model/peak/' \
-               'assignPeakSpread/'
-
+    old_path = '<WORKING_DIRECTORY>'
     project_path = os.path.join(working_dir, 'Metro_Project')
 
     for file in files:
         with open(os.path.join(project_path, file), 'r') as src:
             filedata = src.read()
-
         current_dir_str = working_dir.replace('\\', '/') + '/'
-        bank_error_str = 'assignPeakSpreademmebank'
-        bank_error_fix = 'assignPeakSpread\emmebank'
         filedata = filedata.replace(old_path, current_dir_str)
-        filedata = filedata.replace(bank_error_str, bank_error_fix)
-
         with open(os.path.join(project_path, file), 'w') as src:
             src.write(filedata)
 
