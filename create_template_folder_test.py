@@ -51,5 +51,13 @@ def test_two_folders_exist(tmpdir):
         assert len(os.listdir(project_folder)) == 10
 
 
-def test_rewrite_path():
-    pass
+def test_rewrite_path(tmpdir):
+    p = str(tmpdir)
+    ctf.copy_template_folder(p)  # Creates a `Metro_Project` Folder
+    ctf.path_edits(p)
+    project_folder = os.path.join(p, 'Metro_Project')
+    emp_file = os.path.join(project_folder, 'Metro_Project.emp')
+    emp_string = p + '\\' + 'emmebank;;windows-1252'
+    emp_string = emp_string.replace('\\', '/')
+    assert 'WORKING_DIRECTORY' not in open(emp_file).read()
+    assert emp_string in open(emp_file).read()
