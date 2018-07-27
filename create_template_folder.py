@@ -23,7 +23,8 @@ def copy_template_folder(working_dir):
     # Check for existing project folder.
     project_folders = ['Metro_Project', 'New_Project']
     for project in project_folders:
-        if os.path.isdir(project):
+        folder_path = os.path.join(working_dir, project)
+        if os.path.isdir(folder_path):
             overwrite = raw_input(project + ' folder exists! Delete? (y/n)\n')
             if overwrite.lower() == 'y':
                 shutil.rmtree(os.path.join(working_dir, project))
