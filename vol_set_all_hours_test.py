@@ -18,22 +18,22 @@ def test_new_project_does_not_exist(tmpdir):
     p = str(tmpdir)
     emmebank = os.path.join(os.getcwd(), 'emmebank')
     shutil.copyfile(emmebank, os.path.join(p, 'emmebank'))
-    vol_set.new_project(p)
-    new_project_dir = os.path.join(p, 'New_Project')
-    new_project_file = os.path.join(new_project_dir, 'New_Project.emp')
+    vol_set.Metro_Project(p)
+    new_project_dir = os.path.join(p, 'Metro_Project')
+    new_project_file = os.path.join(new_project_dir, 'Metro_Project.emp')
     assert os.path.isdir(new_project_dir) is True
     assert os.path.isfile(new_project_file) is True
 
 
 def test_new_project_exists(tmpdir):
-    """test for existing New_Project folder behavior."""
+    """test for existing Metro_Project folder behavior."""
     p = str(tmpdir)
-    tmpdir.mkdir('New_Project')
+    tmpdir.mkdir('Metro_Project')
     emmebank = os.path.join(os.getcwd(), 'emmebank')
     shutil.copyfile(emmebank, os.path.join(p, 'emmebank'))
-    vol_set.new_project(p)
-    new_project_dir = os.path.join(p, 'New_Project')
-    new_project_file = os.path.join(new_project_dir, 'New_Project.emp')
+    vol_set.Metro_Project(p)
+    new_project_dir = os.path.join(p, 'Metro_Project')
+    new_project_file = os.path.join(new_project_dir, 'Metro_Project.emp')
     assert os.path.isdir(new_project_dir) is True
     assert os.path.isfile(new_project_file) is True
 

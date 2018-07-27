@@ -26,15 +26,15 @@ import inro.emme.desktop.app as _app
 import inro.modeller as _m
 
 
-def new_project(working_dir):
-    """Replaces `New_Project` directory and creates new .emp file."""
+def Metro_Project(working_dir):
+    """Replaces `Metro_Project` directory and creates new .emp file."""
     emmebank_path = os.path.join(working_dir, 'emmebank')
     try:
-        shutil.rmtree(os.path.join(working_dir, 'New_Project'))
-        project = _app.create_project(working_dir, 'New_Project')
+        shutil.rmtree(os.path.join(working_dir, 'Metro_Project'))
+        project = _app.create_project(working_dir, 'Metro_Project')
     except WindowsError:
         if os.path.exists(working_dir):
-            project = _app.create_project(working_dir, 'New_Project')
+            project = _app.create_project(working_dir, 'Metro_Project')
         else:
             print 'Path does not exist. Please enter an existing path.'
             sys.exit()
@@ -50,7 +50,7 @@ def shapefile_export(working_dir, scenario, app):
     toolbox."""
     print 'Exporting shapefile...'
     export_path = os.path.join(working_dir,
-                               'New_Project/Media/Python_exported_scenario')
+                               'Metro_Project/Media/Python_exported_scenario')
     my_modeller = _m.Modeller(app)
     network_2_shp = my_modeller.tool(
         'inro.emme.data.network.export_network_as_shapefile'
@@ -97,7 +97,7 @@ def attribute_copy(bank_in):
 
 def main():
     project_path = os.getcwd()
-    new_app, new_bank = new_project(project_path)
+    new_app, new_bank = Metro_Project(project_path)
     new_bank.open()
     attribute_copy(new_bank.core_emmebank)
     shapefile_export(project_path, new_bank.core_emmebank.scenario(2017),
