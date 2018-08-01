@@ -1,5 +1,5 @@
 """
-vol_set_all_hours_test.py 
+vol_set_all_hours_test.py
 by Kevin Saavedra, Metro, kevin.saavedra@oregonmetro.gov
 
 Run this test file from a cygwin window on a server that contains the INRO
@@ -64,7 +64,7 @@ def test_attribute_copy(tmpdir):
                                                     ['@am0809'])[1][:-1]
     assert workaround_0708 == (
         tbce.scenario(2007).get_attribute_values('LINK', ['auto_volume'])[1])
-    assert workaround_0809 == (
+    assert workaround_0809 == (x
         tbce.scenario(2008).get_attribute_values('LINK', ['auto_volume'])[1])
 
     """

@@ -87,7 +87,7 @@ def main():
     Main program flow.
     """
     working_dir = os.path.join(
-        os.getcwd(), 'New_Project/Media/Python_exported_scenario/')
+        os.getcwd(), 'Metro_Project/Media/Python_exported_scenario/')
     print 'Loading files...'
     df_links = gpd.read_file(os.path.join(working_dir, "emme_links.shp"))
     df_links.crs = {'init': 'epsg:2913'}
@@ -98,13 +98,13 @@ def main():
     df_links = links_filter(df_links)
     print 'Exporting links...'
     df_links.to_file(
-        'New_Project/Media/Python_exported_scenario/output_links.shp', 
+        'Metro_Project/Media/Python_exported_scenario/output_links.shp', 
         driver='ESRI Shapefile')
 
     df_nodes = intersect_filter(df_nodes, df_links)
     print 'Exporting nodes...'
     df_nodes.to_file(
-        'New_Project/Media/Python_exported_scenario/output_nodes.shp',
+        'Metro_Project/Media/Python_exported_scenario/output_nodes.shp',
         driver='ESRI Shapefile')
     print 'Script completed.'
 
