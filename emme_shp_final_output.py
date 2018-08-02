@@ -78,7 +78,7 @@ def intersect_filter(df_shp, df_shp_intersects):
     df_join = df_join[['ID_left', 'X', 'Y', 'geometry']]
     df_join = df_join.rename(columns={'ID_left': 'ID'})
     # TODO: INVESTIGATE WHY THERE ARE SO MANY DUPLICATE NODES FROM THIS STEP
-    df_join = df_join.drop_duplicates(['ID', 'X', 'Y']) 
+    df_join = df_join.drop_duplicates(['ID', 'X', 'Y'])
     return df_join
 
 
