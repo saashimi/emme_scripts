@@ -24,7 +24,10 @@ def main(network_file):
                 with open(filename, 'w') as dest:
                     dest.write(line)
                     write_line_marker = True
-                    continue
+
+            elif write_line_marker:
+                with open(filename, 'a') as dest:
+                    dest.write(line)
 
 if __name__ == '__main__':
     main(sys.argv[1])
