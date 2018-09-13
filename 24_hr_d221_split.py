@@ -1,7 +1,14 @@
 """
 24_hr_d221_split.py
 
+By: Kevin Saavedra, Metro, kevin.saavedra@oregonmetro.gov
+
 Reads d221 files and creates separate text files per transit line.
+
+Useage:
+>>>> python 24_hr_d221_split.py <network_file> <emme_specified_hour>
+
+e.x. python 24_hr_d221_split.py d221.RTP18_2015_Base_pktr HW_0001
 """
 
 
@@ -12,6 +19,10 @@ import re
 
 
 def load_xlsx(hour_in):
+    """Loads excel input file.
+    Input: hour_in, an emme hour code as user arg.
+    Returns: df_joined, a pandas dataframe
+    """
     xlsx_file = os.path.abspath(
         'H:/rtp/2018rtp/_round2/modelRuns/2015/development/'
         'Inputs_2015_Kate_DEV.xlsx')
@@ -22,6 +33,12 @@ def load_xlsx(hour_in):
 
 
 def filter_valid_transit(df_in, hour_in):
+    """Filters master dataframe for VEH_IDs valid for specified hour
+    Inputs: df_in, a pandas dataframe containing joined transit_lines and 
+            transit_types excel worksheets.
+            hour_in, an emme hour code as user arg.
+    Returns: transit_list, a list of valid VEH_IDs per specified hour
+    """
     df_in = df_in[df_in[hour_in].notnull()]
     transit_list = df_in['VEH_ID'].tolist()
     return transit_list
@@ -29,7 +46,8 @@ def filter_valid_transit(df_in, hour_in):
 
 def clean_and_list(header_in):
     """Converts raw text lines to cleaned lists.
-    Input: header_in, the header line.
+    Input: header_in, the emme transit header line.
+    Returns: header_list, a cleaned list of all transit header elements.
     """
     # list everything between single quotes, e.g. 'BLUE    HILLS/GRESHa  '
     list_match = re.findall(r"'(.*?)'", header_in)
@@ -51,8 +69,14 @@ def clean_and_list(header_in):
 
 
 def header_parser(list_in, hour_in, df_in):
-    """
-    hour is time of day `HW_0001`, etc.
+    """Replaces existing headways based on excel lookup table values per given
+    hour.
+    Inputs: list_in, a cleaned list of all transit header elements.
+            hour_in, an emme hour code as user arg.
+            df_in, a pandas dataframe containing joined transit_lines and
+            transit_types excel worksheets.
+    Returns: list_in, input list but with edits for transit id, headway, and 
+             zeroed-out user_id fields.
     """
     transit_id = list_in[0]
     transit_lookup = df_in.loc[df_in['VEH_ID'] == transit_id]
@@ -74,7 +98,9 @@ def header_parser(list_in, hour_in, df_in):
 def main(network_file, hour):
     """
     Main network parse script.
-    inputs: network_file,  a d221 network file supplied as user argument.
+    Inputs: network_file,  a d221 network file supplied as user argument.
+            hour_in, an emme hour code as user arg.
+    Outputs: Separate network text files per relevant transit lines
     """
     df = load_xlsx(hour)
     filtered_transit = filter_valid_transit(df, hour)
