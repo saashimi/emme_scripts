@@ -33,23 +33,43 @@ def clean_and_list(header_in):
     """
     # list everything between single quotes, e.g. 'BLUE    HILLS/GRESHa  '
     list_match = re.findall(r"'(.*?)'", header_in)
+
+    # delete existing transit info
+    header_in = header_in.replace(list_match[0], '')
+    header_in = header_in.replace(list_match[1], '')
+    header_list = filter(None, header_in.rstrip().split(' '))
+
+    # cleaned and stripped transit values
+    # note that stripped_id does not yet contain a' formatting in emme!
     stripped_id = list_match[0].strip()
-    stripped_name = ' '.join(list_match[1].split())
-    header_in = header_in.replace(list_match[0], stripped_id)
-    header_in = header_in.replace(list_match[1], stripped_name)
-    return filter(None, header_in.rstrip().split(' '))
+    stripped_name = "'" + ' '.join(list_match[1].split()) + "'"
+
+    header_list[0] = stripped_id
+    header_list[5] = stripped_name
+
+    return header_list
 
 
-def header_parser(list_in):
+def header_parser(list_in, hour_in, df_in):
     """
     hour is time of day `HW_0001`, etc.
     """
-    
-    #list_in[0] = "a'" + list_in[0]
-    #list_in[3] = 
+    transit_id = list_in[0]
+    transit_lookup = df_in.loc[df_in['VEH_ID'] == transit_id]
+    new_headway = str(transit_lookup[hour_in].tolist()[0])
+
+    # Write new attributes
+    formatted_transit_id = "a'" + transit_id + "'"
+    list_in[0] = formatted_transit_id
+    list_in[3] = new_headway
+
+    # Zero out all the user attributes
+    list_in[6] = '0'
+    list_in[7] = '0'
+    list_in[8] = '0'
 
     return list_in
-    
+
 
 def main(network_file, hour):
     """
@@ -58,12 +78,12 @@ def main(network_file, hour):
     """
     df = load_xlsx(hour)
     filtered_transit = filter_valid_transit(df, hour)
-    
+
     with open(network_file, 'r') as src:
         write_line_flag = False
 
         for line in src:
-                        
+
             if "a'" in line:
                 if any(transit in line for transit in filtered_transit):
 
@@ -72,8 +92,7 @@ def main(network_file, hour):
                     filename = filename[1:] + '.txt'
 
                     header_list = clean_and_list(line)
-                    print header_list
-                    edited_header = header_parser(header_list)
+                    edited_header = header_parser(header_list, hour, df)
 
                     with open(filename, 'w') as dest:
                         str = ''
