@@ -58,10 +58,9 @@ def main(network_file, hour):
     """
     df = load_xlsx(hour)
     filtered_transit = filter_valid_transit(df, hour)
-    print filtered_transit
     
     with open(network_file, 'r') as src:
-        write_line_marker = False
+        write_line_flag = False
 
         for line in src:
                         
@@ -73,6 +72,7 @@ def main(network_file, hour):
                     filename = filename[1:] + '.txt'
 
                     header_list = clean_and_list(line)
+                    print header_list
                     edited_header = header_parser(header_list)
 
                     with open(filename, 'w') as dest:
@@ -80,11 +80,11 @@ def main(network_file, hour):
                         for item in edited_header:
                             str = str + item + '  '
                         dest.write(str + '\n')
-                        write_line_marker = True
+                        write_line_flag = True
                 else:
-                    write_line_marker = False
+                    write_line_flag = False
 
-            elif write_line_marker:
+            elif write_line_flag:
                 with open(filename, 'a') as dest:
                     dest.write(line)
 
