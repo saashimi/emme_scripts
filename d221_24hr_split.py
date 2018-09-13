@@ -107,32 +107,32 @@ def main(network_file, hour):
 
     with open(network_file, 'r') as src:
         write_line_flag = False
+        filename = 'd221.RTP18_2015_' + hour
 
-        for line in src:
+        with open(filename, 'w') as dest:
+            dest.write('t lines init\n')
+            dest.close()
 
-            if "a'" in line:
-                if any(transit in line for transit in filtered_transit):
+            for line in src:
 
-                    filename = line[:8].replace(' ', '')
-                    filename = filename.replace("'", '')
-                    filename = filename[1:]
+                if "a'" in line:
+                    if any(transit in line for transit in filtered_transit):
 
-                    header_list = clean_and_list(line)
-                    edited_header = header_parser(header_list, hour, df)
+                        header_list = clean_and_list(line)
+                        edited_header = header_parser(header_list, hour, df)
 
-                    with open(filename, 'w') as dest:
-                        dest.write('t lines init\n')
-                        str = ''
-                        for item in edited_header:
-                            str = str + item + '  '
-                        dest.write(str + '\n')
-                        write_line_flag = True
-                else:
-                    write_line_flag = False
+                        with open(filename, 'a') as dest:
+                            str = ''
+                            for item in edited_header:
+                                str = str + item + '  '
+                            dest.write(str + '\n')
+                            write_line_flag = True
+                    else:
+                        write_line_flag = False
 
-            elif write_line_flag:
-                with open(filename, 'a') as dest:
-                    dest.write(line)
+                elif write_line_flag:
+                    with open(filename, 'a') as dest:
+                        dest.write(line)
 
 
 if __name__ == '__main__':
