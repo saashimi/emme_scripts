@@ -8,7 +8,9 @@ import pytest
 
 
 def test_load_xlsx():
-    df = d221.load_xlsx('HW_0001')
+    test_path = 'H:/rtp/2018rtp/_round2/modelRuns/2015/development/'\
+                'Inputs_2015_Kate_DEV.xlsx'
+    df = d221.load_xlsx(test_path, 'HW_0001')
     column_list = ['VEH_ID', 'VEH_NAME', 'VEH_MODE', 'VEH_CLASS',
                    'DEFAULT_SPEED', 'TRIMET_TYPE', 'DIRECTIONAL',
                    'TRIMET_NAME', 'HW_0001', 'HW_0102', 'HW_0203',
@@ -21,8 +23,10 @@ def test_load_xlsx():
 
 
 def test_filter_valid_transit():
+    test_path = 'H:/rtp/2018rtp/_round2/modelRuns/2015/development/'\
+                'Inputs_2015_Kate_DEV.xlsx'
     hour = 'HW_0001'
-    df = d221.load_xlsx(hour)
+    df = d221.load_xlsx(test_path, hour)
     # TODO: CHECK BEST PRACTICES ON RELIANCE ON EARLIER TESTS
     filter_valid_transit_output = d221.filter_valid_transit(df, hour)
     transit_list_expected = ['01Ba', '01Bb', '01Ga', '01Gb',  '01Ra', '01Rb',

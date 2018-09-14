@@ -18,14 +18,13 @@ import pandas as pd
 import re
 
 
-def load_xlsx(hour_in):
+def load_xlsx(path_in, hour_in):
     """Loads excel input file.
-    Input: hour_in, an emme hour code as user arg.
+    Input: path_in, the full path for the excel inputs file. 
+           hour_in, an emme hour code as user arg.
     Returns: df_joined, a pandas dataframe
     """
-    xlsx_file = os.path.abspath(
-        'H:/rtp/2018rtp/_round2/modelRuns/2015/development/'
-        'Inputs_2015_Kate_DEV.xlsx')
+    xlsx_file = os.path.abspath(path_in)
     df_transit_lines = pd.read_excel(xlsx_file, sheet_name='transit_lines')
     df_transit_types = pd.read_excel(xlsx_file, sheet_name='transit_types')
     df_joined = pd.merge(df_transit_lines, df_transit_types, on='TRIMET_TYPE')
@@ -97,20 +96,25 @@ def header_parser(list_in, hour_in, df_in):
     return list_in
 
 
-def main(network_file, hour):
+def main(network_file, input_file_path, project_name, hour):
     """
     Main network parse script.
-    Inputs: network_file,  a d221 network file supplied as user argument.
-            hour_in, an emme hour code as user arg.
+    Inputs: network_file, a d221 network file supplied as user argument.
+            input_file_path, an excel file containing transit lines and
+                             headways.
+            project_name, the name of the project to be used for the output
+                          file.
+            hour, an emme hour code as user arg.
     Outputs: Single d221 batch file with edited headways and zeroed-out user
              attributes.
     """
-    df = load_xlsx(hour)
+    df = load_xlsx(input_file_path, hour)
     filtered_transit = filter_valid_transit(df, hour)
 
     with open(network_file, 'r') as src:
         write_line_flag = False
-        filename = 'd221.RTP18_2015_' + hour
+        hour_name = hour[-4:]
+        filename = 'd221.' + project_name + '_' + hour_name
 
         with open(filename, 'w') as dest:
             dest.write('t lines init\n')
@@ -139,4 +143,4 @@ def main(network_file, hour):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
