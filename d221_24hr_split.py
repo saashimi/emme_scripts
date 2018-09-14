@@ -108,13 +108,14 @@ def main(network_file, input_file_path, project_name, hour):
     Outputs: Single d221 batch file with edited headways and zeroed-out user
              attributes.
     """
-    df = load_xlsx(input_file_path, hour)
-    filtered_transit = filter_valid_transit(df, hour)
+    hour_column = 'HW_' + hour
+    df = load_xlsx(input_file_path, hour_column)
+    filtered_transit = filter_valid_transit(df, hour_column)
 
     with open(network_file, 'r') as src:
         write_line_flag = False
-        hour_name = hour[-4:]
-        filename = 'd221.' + project_name + '_' + hour_name
+        #hour_name = hour[-4:]
+        filename = 'd221.' + project_name + '_' + hour
 
         with open(filename, 'w') as dest:
             dest.write('t lines init\n')
@@ -126,7 +127,8 @@ def main(network_file, input_file_path, project_name, hour):
                     if any(transit in line for transit in filtered_transit):
 
                         header_list = clean_and_list(line)
-                        edited_header = header_parser(header_list, hour, df)
+                        edited_header = header_parser(header_list, hour_column,
+                                                      df)
 
                         with open(filename, 'a') as dest:
                             str = ''
