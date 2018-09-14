@@ -29,6 +29,7 @@ def load_xlsx(hour_in):
     df_transit_lines = pd.read_excel(xlsx_file, sheet_name='transit_lines')
     df_transit_types = pd.read_excel(xlsx_file, sheet_name='transit_types')
     df_joined = pd.merge(df_transit_lines, df_transit_types, on='TRIMET_TYPE')
+
     return df_joined
 
 
@@ -41,6 +42,7 @@ def filter_valid_transit(df_in, hour_in):
     """
     df_in = df_in[df_in[hour_in].notnull()]
     transit_list = df_in['VEH_ID'].tolist()
+
     return transit_list
 
 
@@ -49,7 +51,7 @@ def clean_and_list(header_in):
     Input: header_in, the emme transit header line.
     Returns: header_list, a cleaned list of all transit header elements.
     """
-    # list everything between single quotes, e.g. 'BLUE    HILLS/GRESHa  '
+    # regex everything between single quotes, e.g. 'BLUE    HILLS/GRESHa  '
     list_match = re.findall(r"'(.*?)'", header_in)
 
     # delete existing transit info
@@ -58,7 +60,7 @@ def clean_and_list(header_in):
     header_list = list(filter(None, header_in.rstrip().split(' ')))
 
     # cleaned and stripped transit values
-    # note that stripped_id does not yet contain a' formatting in emme!
+    # note that stripped_id does not yet contain a' formatting needed in emme!
     stripped_id = list_match[0].strip()
     stripped_name = "'" + ' '.join(list_match[1].split()) + "'"
 
