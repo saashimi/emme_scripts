@@ -102,7 +102,8 @@ def main(network_file, hour):
     Main network parse script.
     Inputs: network_file,  a d221 network file supplied as user argument.
             hour_in, an emme hour code as user arg.
-    Outputs: Separate network text files per relevant transit lines
+    Outputs: Single d221 batch file with edited headways and zeroed-out user
+             attributes.
     """
     df = load_xlsx(hour)
     filtered_transit = filter_valid_transit(df, hour)
