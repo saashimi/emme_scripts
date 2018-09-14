@@ -6,9 +6,12 @@ By: Kevin Saavedra, Metro, kevin.saavedra@oregonmetro.gov
 Reads d221 files and creates separate text files per transit line.
 
 Useage:
->>>> python 24_hr_d221_split.py <network_file> <emme_specified_hour>
+>>>> python 24_hr_d221_split.py <network_file> <excel_inputs_path>
+                                <project_name> <emme_specified_hour>
 
-e.x. python 24_hr_d221_split.py d221.RTP18_2015_Base_pktr HW_0001
+e.x:
+>> python 24_hr_d221_split.py d221.RTP18_2015_Base_pktr
+                                     Inputs_2015_Kate_DEV.xlsx RTP18_2015 0001
 """
 
 
@@ -114,7 +117,7 @@ def main(network_file, input_file_path, project_name, hour):
 
     with open(network_file, 'r') as src:
         write_line_flag = False
-        #hour_name = hour[-4:]
+
         filename = 'd221.' + project_name + '_' + hour
 
         with open(filename, 'w') as dest:
