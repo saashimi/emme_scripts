@@ -6,11 +6,11 @@ By: Kevin Saavedra, Metro, kevin.saavedra@oregonmetro.gov
 Reads d221 files and creates text files per user indicated hour.
 
 Useage:
->>>> python 24_hr_d221_split.py <network_file> <excel_inputs_path>
+>>>> python d221_24hr_split.py <network_file> <excel_inputs_path>
                                 <project_name> <emme_specified_hour>
 
 e.x:
->> python 24_hr_d221_split.py d221.RTP18_2015_Base_pktr
+>> python d221_24hr_split.py d221.RTP18_2015_Base_pktr
                                      Inputs_2015_Kate_DEV.xlsx RTP18_2015 0001
 """
 
