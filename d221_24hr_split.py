@@ -3,7 +3,8 @@ d221_24_split.py
 
 By: Kevin Saavedra, Metro, kevin.saavedra@oregonmetro.gov
 
-Reads d221 files and creates text files per user indicated hour.
+Reads d221 files and creates one unified d221 transit file per user indicated
+hour.
 
 Useage:
 >>>> python d221_24hr_split.py <network_file> <excel_inputs_path>
